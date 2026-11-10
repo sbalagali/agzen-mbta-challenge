@@ -33,7 +33,7 @@ class MBTAClient:
         path: str,
         params: dict[str, str] | None=None
         )-> list[dict[str, Any]]:
-        """Sense a GET request to the API and returns the data.
+        """Sends a GET request to the API and returns the data.
         
         Args:
             path: The endpoint path, like "/routes".
@@ -50,9 +50,5 @@ class MBTAClient:
         return response.json()["data"]
 
     def get_subway_routes(self) -> list[dict[str, Any]]:
-        """Gets all subway routes (Light Rail and Heavy Rail).
-        
-        Returns: 
-            The raw route data from the API. 
-        """
+        """Gets all subway routes (Light Rail and Heavy Rail)."""
         return self._get("/routes", params={"filter[type]": SUBWAY_ROUTE_TYPES})
