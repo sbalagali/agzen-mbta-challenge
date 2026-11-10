@@ -65,7 +65,13 @@ Park Street: Red Line, Green Line B, Green Line C, Green Line D, Green Line E
 Downtown Crossing: Red Line, Orange Line
 Ashmont: Red Line, Mattapan Line
 ...
+
+Start stop: Northeastern University
+End stop: Harvard
+Northeastern University to Harvard: Green Line E, Red Line
 ```
+
+Stop names must match the MBTA's names exactly. For example, Kendall is Kendall/MIT.
 
 ## Running Tests
 
@@ -87,8 +93,29 @@ I filter on the server with `/routes?filter[type]=0,1` instead of downloading al
 
 The main tradeoff I thought about is if we want to extend the program to include bus routes then we would need to write another request.
 
+
 ### Question 2: Counting stops and finding connections
 
 The program fetches the stops for each subway route with `/stops?filter[route]=<route id>`. It builds a dictionary that maps each route name to its list of stop names and all 3 parts of Question 2 use this dictionary.
 
 To find connecting stops, it flips the dictionary so each stop maps to the routes it is on. Then it only keeps the stops with two or more routes.
+
+
+### Question 3: Finding a path
+
+The program treats each route as a node in a graph. Two routes are connected if they share at least one stop. It then runs breadth first search from the routes that contain the start stop until it reaches a route that contains the end stop. 
+
+BFS checks all paths with fewer transfers before paths with more transfers, so the result uses the fewest number of routes. It does not try to find the fewest stops, since the question asks for a list of routes.
+
+
+#### Performance
+
+- Building the graph compares every pair of routes, which is O(N^2) where N is the number of routes. With 8 routes, that's 64 checks. 
+- BFS visits each route at most once, which is O(N + E) where E is the number of connections between routes.
+
+#### Assumptions/Limitations
+
+- Each Green Line branch (B, C, D, E) is its own route, since that is how the API models them. Stops like Kenmore show up as connecting several Green Line branches.
+- Stops are matched by name, not by stop id. I thought this is a bit simpler and works better for the subway.
+- Stop names in Question 3 are case sensitive so they must match exactly.
+- The program gets fresh data on every run, it does not cache anything.
