@@ -1,6 +1,7 @@
 """Runs the MBTA subway challenge."""
 
 from mbta.client import MBTAClient
+from mbta.pathfinder import find_route_path
 from mbta.routes import (
     get_connecting_stops,
     get_route_names,
@@ -35,6 +36,21 @@ def main():
     for stop, routes in get_connecting_stops(stops_by_route).items():
         print(f"{stop}: {', '.join(routes)}")
 
+    # Q3
+    print()
+    start_stop = input("Start stop: ").strip()
+    end_stop = input("End stop: ").strip()
+
+    try:
+        path = find_route_path(stops_by_route, start_stop, end_stop)
+    except ValueError as error:
+        print(error)
+        return
+
+    if path is None:
+        print("No route found.")
+    else:
+        print(f"{start_stop} to {end_stop}: {', '.join(path)}")
 
 
 if __name__ == "__main__":
