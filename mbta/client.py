@@ -28,11 +28,12 @@ class MBTAClient:
         if api_key:
             self.session.headers["x-api-key"] = api_key
 
+
     def _get(
         self,
         path: str,
-        params: dict[str, str] | None=None
-        )-> list[dict[str, Any]]:
+        params: dict[str, str] | None=None,
+    )-> list[dict[str, Any]]:
         """Sends a GET request to the API and returns the data.
         
         Args:
@@ -49,6 +50,12 @@ class MBTAClient:
         response.raise_for_status()
         return response.json()["data"]
 
+
     def get_subway_routes(self) -> list[dict[str, Any]]:
         """Gets all subway routes (Light Rail and Heavy Rail)."""
         return self._get("/routes", params={"filter[type]": SUBWAY_ROUTE_TYPES})
+
+
+    def get_stops_for_route(self, route_id: str) -> list[dict[str, Any]]:
+        """Gets all stops on a route."""
+        return self._get("/stops", params={"filter[route]": route_id})
